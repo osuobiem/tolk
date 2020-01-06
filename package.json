@@ -1,0 +1,25 @@
+{
+  "name": "tolk",
+  "version": "1.0.0",
+  "description": "Simple chat API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/osuobiem/tolk.git"
+  },
+  "keywords": [
+    "express.js",
+    "mongodb",
+    "socket.io",
+    "api"
+  ],
+  "author": "Gabriel Osuobiem",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/osuobiem/tolk/issues"
+  },
+  "homepage": "https://github.com/osuobiem/tolk#readme"
+}
