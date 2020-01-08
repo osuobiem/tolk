@@ -26,9 +26,6 @@ const Logger = require("./lib/logger");
 // Set app PORT
 const PORT = process.env.PORT || 3000;
 
-// Create app logger instance
-const log = new Logger();
-
 // Connect to socket
 const io = new Socket(http);
 io.connect();
@@ -40,5 +37,6 @@ app.get("/", function(req, res) {
 
 // Start application server
 http.listen(PORT, () => {
-  log.info(`Server is listening on port ${PORT}`);
+  console.log(`Server is listening on port ${PORT}`);
+  new Logger(`Server is listening on port ${PORT}`);
 });
