@@ -36,6 +36,7 @@
   </head>
   <body>
     <h4>Chat</h4>
+    <div id="message-area"></div>
     <form id="chat-form">
       <textarea
         name="message"
@@ -48,18 +49,24 @@
     </form>
 
     <script>
-      var socket = io();
+      $(function() {
+        var socket = io();
 
-      $("#chat-form").submit(e => {
-        e.preventDefault();
+        $("#chat-form").submit(e => {
+          e.preventDefault();
 
-        if ($("#message").val().length) {
-          socket.emit("message", $("#message").val());
-          $("#message").val("");
-          return false;
-        } else {
-          alert("Message field can not be empty!");
-        }
+          if ($("#message").val().length) {
+            socket.emit("message", $("#message").val());
+            $("#message").val("");
+            return false;
+          } else {
+            alert("Message field can not be empty!");
+          }
+        });
+
+        socket.on("message", msg => {
+          $("#message-area").append($("<p>").text(msg));
+        });
       });
     </script>
   </body>

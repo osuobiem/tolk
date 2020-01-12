@@ -28,9 +28,9 @@ const PORT = process.env.PORT || 3000;
 
 // Connect to socket
 let io = new Socket(http);
-io.connect(socket => {
-  socket.on("message", msg => {
-    console.log(msg);
+io.connect(sock => {
+  sock.socket.on("message", msg => {
+    sock.io.emit("message", msg);
   });
 });
 
