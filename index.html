@@ -6,21 +6,61 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Socket.io Test File</title>
 
+    <style>
+      #f-btn {
+        padding: 10px 15px;
+        border-radius: 5px;
+        color: #ffffff;
+        background-color: #2a46de;
+        border: 0;
+        margin-top: 10px;
+      }
+
+      #f-btn:hover {
+        background-color: #2136ac;
+        cursor: pointer;
+      }
+
+      #message {
+        display: block;
+        border-radius: 5px;
+      }
+    </style>
+
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-      var socket = io();
-    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
     <h4>Chat</h4>
-    <form>
+    <form id="chat-form">
       <textarea
         name="message"
         placeholder="Type message here"
         cols="30"
         rows="10"
+        id="message"
       ></textarea>
-      <button>Send</button>
+      <button id="f-btn">Send</button>
     </form>
+
+    <script>
+      var socket = io();
+
+      $("#chat-form").submit(e => {
+        e.preventDefault();
+
+        if ($("#message").val().length) {
+          socket.emit("message", $("#message").val());
+          $("#message").val("");
+          return false;
+        } else {
+          alert("Message field can not be empty!");
+        }
+      });
+    </script>
   </body>
 </html>
