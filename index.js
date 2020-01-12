@@ -27,8 +27,12 @@ const Logger = require("./lib/logger");
 const PORT = process.env.PORT || 3000;
 
 // Connect to socket
-const io = new Socket(http);
-io.connect();
+let io = new Socket(http);
+io.connect(socket => {
+  socket.on("message", msg => {
+    console.log(msg);
+  });
+});
 
 // Load test index.html file for socket.io client
 app.get("/", function(req, res) {
