@@ -32,6 +32,11 @@ io.connect(sock => {
   sock.socket.on("message", msg => {
     sock.io.emit("message", msg);
   });
+
+  // Check for socket disconnection
+  sock.socket.on("disconnect", s => {
+    io.disconnect(sock.socket);
+  });
 });
 
 // Load test index.html file for socket.io client

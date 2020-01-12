@@ -67,6 +67,10 @@
         socket.on("message", msg => {
           $("#message-area").append($("<p>").text(msg));
         });
+
+        socket.on("disconnect", () => {
+          socket.emit("disconnect", socket);
+        });
       });
     </script>
   </body>
