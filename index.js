@@ -26,11 +26,19 @@ const Logger = require("./lib/logger");
 // Set app PORT
 const PORT = process.env.PORT || 3000;
 
+// Create logger instance
+const log = new Logger();
+log.console = true;
+
 // Connect to socket
 let io = new Socket(http);
 io.connect(sock => {
   sock.socket.on("message", msg => {
     sock.socket.broadcast.emit("message", msg);
+
+    let ip = sock.socket.handshake.address;
+
+    log.info(`${ip} sent a broadcast message`);
   });
 
   // Check for socket disconnection
