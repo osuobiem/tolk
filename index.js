@@ -30,7 +30,7 @@ const PORT = process.env.PORT || 3000;
 let io = new Socket(http);
 io.connect(sock => {
   sock.socket.on("message", msg => {
-    sock.io.emit("message", msg);
+    sock.socket.broadcast.emit("message", msg);
   });
 
   // Check for socket disconnection

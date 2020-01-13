@@ -50,7 +50,7 @@
 
     <script>
       $(function() {
-        var socket = io();
+        var socket = io("http://localhost:8008");
 
         $("#chat-form").submit(e => {
           e.preventDefault();
