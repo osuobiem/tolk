@@ -22,6 +22,9 @@ const http = require("http").createServer(app);
 // Require in-app modules
 const Socket = require("./lib/socket");
 const Logger = require("./lib/logger");
+const router = require("./routes");
+
+app.use(router);
 
 // Set app PORT
 const PORT = process.env.PORT || 3000;
@@ -45,11 +48,6 @@ io.connect(sock => {
   sock.socket.on("disconnect", s => {
     io.disconnect(sock.socket);
   });
-});
-
-// Load test index.html file for socket.io client
-app.get("/", function(req, res) {
-  res.sendFile(__dirname + "/index.html");
 });
 
 // Start application server
