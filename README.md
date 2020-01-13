@@ -1,2 +1,3 @@
 # tolk
-Simple chat API
+
+Simple chat server
