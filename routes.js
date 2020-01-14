@@ -26,8 +26,16 @@ const router = express.Router();
 const log = new Logger();
 log.console = true;
 
+// Static files routes
 router.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
+  log.info(
+    req.connection.remoteAddress + " - " + req.method + " - " + req.path
+  );
+});
+
+router.get("/group", (req, res) => {
+  res.sendFile(__dirname + "/group.html");
   log.info(
     req.connection.remoteAddress + " - " + req.method + " - " + req.path
   );
