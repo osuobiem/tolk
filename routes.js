@@ -48,15 +48,15 @@ router.use(logIt);
 
 // Static files routes
 router.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.sendFile(__dirname + "/pages/index.html");
 });
 
 router.get("/group", (req, res) => {
-  res.sendFile(__dirname + "/group.html");
+  res.sendFile(__dirname + "/pages/group.html");
 });
 
 // API routes
-router.post("/users/create", (req, res) => {
+router.post("/api/users/create", (req, res) => {
   user_con.create(req.body, resp => {
     res.json({ status: resp.status, message: resp.message });
   });

@@ -23,7 +23,7 @@ log.console = true;
 
 class User {
   // Member variables
-  username;
+  user;
 
   /**
    * Create a new user - Insert user record in the db
@@ -41,6 +41,8 @@ class User {
           callback({ status: false, message: "Could not create user" });
         }
         log.info("User created successfully");
+
+        this.user = doc;
 
         callback({ status: true, message: "User created successfully" });
       })
