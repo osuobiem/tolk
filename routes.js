@@ -1,7 +1,8 @@
 /**
- * index.js
+ * routes.js
  *
- * Entry file
+ * Router
+ * Manage all application routes
  *
  * @package Tolk
  * @version 1.0.0
