@@ -26,19 +26,23 @@ const router = express.Router();
 const log = new Logger();
 log.console = true;
 
-// Static files routes
-router.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+// Logger middleware
+function logIt(req, res, next) {
   log.info(
     req.connection.remoteAddress + " - " + req.method + " - " + req.path
   );
+  next();
+}
+
+router.use(logIt);
+
+// Static files routes
+router.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
 });
 
 router.get("/group", (req, res) => {
   res.sendFile(__dirname + "/group.html");
-  log.info(
-    req.connection.remoteAddress + " - " + req.method + " - " + req.path
-  );
 });
 
 module.exports = router;
