@@ -30,7 +30,7 @@ class User {
    *
    * @param {object} user
    */
-  create(user) {
+  create(user, callback) {
     let user_model = new UserModel(user);
     user_model
       .save()
@@ -38,16 +38,18 @@ class User {
         if (!doc || doc.length === 0) {
           log.error("Could not create user");
 
-          return false;
+          callback({ status: false, message: "Could not create user" });
         }
         log.info("User created successfully");
 
-        return true;
+        callback({ status: true, message: "User created successfully" });
       })
       .catch(err => {
         log.error(`Could not create user <<<< ${err} >>>>`);
 
-        return false;
+        callback({ status: false, message: err.message });
       });
   }
 }
+
+module.exports = User;

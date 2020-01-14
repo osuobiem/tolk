@@ -20,6 +20,11 @@ const express = require("express");
 const Logger = require("./lib/logger");
 const Mongo = require("./lib/mongo");
 
+// Controllers
+const User = require("./controllers/user");
+
+const user_con = new User();
+
 // Initialize router object
 const router = express.Router();
 
@@ -48,6 +53,13 @@ router.get("/", (req, res) => {
 
 router.get("/group", (req, res) => {
   res.sendFile(__dirname + "/group.html");
+});
+
+// API routes
+router.post("/users/create", (req, res) => {
+  user_con.create(req.body, resp => {
+    res.json({ status: resp.status, message: resp.message });
+  });
 });
 
 module.exports = router;
