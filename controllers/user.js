@@ -37,13 +37,16 @@ class User {
       .then(doc => {
         if (!doc || doc.length === 0) {
           log.error("Could not create user");
+
           return false;
         }
         log.info("User created successfully");
+
         return true;
       })
       .catch(err => {
         log.error(`Could not create user <<<< ${err} >>>>`);
+
         return false;
       });
   }

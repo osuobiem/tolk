@@ -18,6 +18,7 @@ const express = require("express");
 
 // Require in-app modules
 const Logger = require("./lib/logger");
+const Mongo = require("./lib/mongo");
 
 // Initialize router object
 const router = express.Router();
@@ -25,6 +26,10 @@ const router = express.Router();
 // Create logger instance
 const log = new Logger();
 log.console = true;
+
+// Initialize Mongo instance and Connect to MongoDB
+const mongo = new Mongo();
+mongo.connect();
 
 // Logger middleware
 function logIt(req, res, next) {
