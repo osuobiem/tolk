@@ -51,6 +51,10 @@ router.get("/", (req, res) => {
   res.sendFile(__dirname + "/pages/index.html");
 });
 
+router.get("/join", (req, res) => {
+  res.sendFile(__dirname + "/pages/join.html");
+});
+
 router.get("/group", (req, res) => {
   res.sendFile(__dirname + "/pages/group.html");
 });
@@ -58,6 +62,12 @@ router.get("/group", (req, res) => {
 // API routes
 router.post("/api/users/create", (req, res) => {
   user_con.create(req.body, resp => {
+    res.json({ status: resp.status, message: resp.message });
+  });
+});
+
+router.post("/api/users/login", (req, res) => {
+  user_con.login(req.body, resp => {
     res.json({ status: resp.status, message: resp.message });
   });
 });

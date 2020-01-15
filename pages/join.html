@@ -38,8 +38,8 @@
     ></script>
   </head>
   <body>
-    <h4>Login to Chat</h4>
-    <form id="login-form">
+    <h4>Join Chat</h4>
+    <form id="join-form">
       <input
         type="text"
         placeholder="Username"
@@ -54,12 +54,12 @@
         id="password"
         class="field"
       />
-      <button id="f-btn">Login</button>
-      <p>Don't have an account? <a href="/join">Join</a></p>
+      <button id="f-btn">Join</button>
+      <p>Already joined? <a href="/">Login</a></p>
     </form>
 
     <script>
-      $("#login-form").submit(e => {
+      $("#join-form").submit(e => {
         e.preventDefault();
 
         let username = $("#username").val();
@@ -67,7 +67,7 @@
 
         $.ajax({
           type: "POST",
-          url: "http://localhost:8008/api/users/login",
+          url: "http://localhost:8008/api/users/create",
           data: `{ "username": "${username}", "password": "${password}" }`,
           contentType: "application/json",
           success: res => {
