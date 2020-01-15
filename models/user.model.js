@@ -15,7 +15,6 @@
 
 // Require useful modules
 const mongoose = require("mongoose");
-const bcrypt = reqquire("bcrypt");
 
 let User = new mongoose.Schema({
   username: {
