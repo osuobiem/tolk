@@ -35,28 +35,44 @@ class User {
    * @param {object} user
    */
   create(user, callback) {
-    let user_model = new UserModel(user);
-    user_model
-      .save()
-      .then(data => {
-        if (!data || data.length === 0) {
-          log.error("Could not create user");
+    bcrypt.hash(user.password, 10, (err, hash) => {
+      if (err) {
+        log.error(`BCryt Error: <<<< ${err} >>>>`);
 
-          callback({ status: false, message: "Could not create user" });
-        }
-        log.info("User created successfully");
+        callback({
+          status: false,
+          message: "Oops somethig went wrong. Try Again!"
+        });
+      } else {
+        user.password = hash;
 
-        const token = jwt.issue({ _id: data._id });
+        let user_model = new UserModel(user);
+        user_model
+          .save()
+          .then(data => {
+            if (!data || data.length === 0) {
+              log.error("Could not create user");
 
-        this.user_data = { token, data };
+              callback({
+                status: false,
+                message: "Oops somethig went wrong. Try Again!"
+              });
+            }
+            log.info("User created successfully");
 
-        callback({ status: true, message: "User created successfully" });
-      })
-      .catch(err => {
-        log.error(`An error occured <<<< ${err} >>>>`);
+            const token = jwt.issue({ _id: data._id });
 
-        callback({ status: false, message: err.message });
-      });
+            this.user_data = { token, data };
+
+            callback({ status: true, message: "User created successfully" });
+          })
+          .catch(err => {
+            log.error(`An error occured <<<< ${err} >>>>`);
+
+            callback({ status: false, message: err.message });
+          });
+      }
+    });
   }
 
   /**

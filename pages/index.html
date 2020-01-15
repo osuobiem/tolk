@@ -21,12 +21,13 @@
         cursor: pointer;
       }
 
-      #username {
+      .field {
         display: block;
         border: solid 0.5px;
         height: 30px;
         border-radius: 5px;
         padding: 5px;
+        margin-bottom: 10px;
       }
     </style>
 
@@ -39,7 +40,20 @@
   <body>
     <h4>Join Chat</h4>
     <form id="join-form">
-      <input type="text" placeholder="Username" name="username" id="username" />
+      <input
+        type="text"
+        placeholder="Username"
+        name="username"
+        id="username"
+        class="field"
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        name="password"
+        id="password"
+        class="field"
+      />
       <button id="f-btn">Join</button>
     </form>
 
@@ -48,11 +62,12 @@
         e.preventDefault();
 
         let username = $("#username").val();
+        let password = $("#password").val();
 
         $.ajax({
           type: "POST",
           url: "http://localhost:8008/api/users/create",
-          data: `{ "username": "${username}" }`,
+          data: `{ "username": "${username}", "password": "${password}" }`,
           contentType: "application/json",
           success: res => {
             if (res.status) {
