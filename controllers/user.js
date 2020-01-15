@@ -13,6 +13,9 @@
 
 "use strict";
 
+// Require useful modules
+const bcrypt = require("bcrypt");
+
 // Require in-app modules
 const UserModel = require("../models/user.model");
 const Logger = require("../lib/logger");
@@ -54,6 +57,61 @@ class User {
 
         callback({ status: false, message: err.message });
       });
+  }
+
+  /**
+   * Process user login
+   *
+   * @param {object} user
+   */
+  login(user) {
+    UserModel.findOne({
+      username: user.username
+    })
+      .then(data => {
+        let pass_comp = this.comparePassword(user.password, data.password);
+
+        if (pass_comp.status) {
+          const token = jwt.issue({ _id: data._id });
+          this.user_data = { token, data };
+
+          log.info("User logged in successfully");
+        } else {
+          log.error(pass_comp.message);
+        }
+
+        return pass_comp;
+      })
+      .catch(err => {
+        log.error(`An error occured <<<< ${err} >>>>`);
+        return {
+          status: false,
+          message: "Oops something went wrong. Try Again!"
+        };
+      });
+  }
+
+  /**
+   * Verify user password
+   *
+   * @param {string} password
+   * @param {string} encryptedPassword
+   */
+  comparePassword(password, encryptedPassword) {
+    bcrypt.compare(password, encryptedPassword, (err, match) => {
+      if (err) {
+        log.error(`Authentication Error: <<<< ${err} >>>>`);
+        return {
+          status: false,
+          message: "Oops something went wrong. Try Again!"
+        };
+      }
+      if (match) return { status: true };
+      else {
+        log.error("Authentication Error: Invalid Credentials");
+        return { status: false, message: "Invalid Credentials!" };
+      }
+    });
   }
 }
 
