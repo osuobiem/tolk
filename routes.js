@@ -36,6 +36,22 @@ log.console = true;
 const mongo = new Mongo();
 mongo.connect();
 
+/**
+ * Exempt path/url from a specific middleware
+ *
+ * @param {string} path
+ * @param {string} middleware
+ */
+function unless(path, middleware) {
+  return function(req, res, next) {
+    if (path === req.path) {
+      return next();
+    } else {
+      return middleware(req, res, next);
+    }
+  };
+}
+
 // Logger middleware
 function logIt(req, res, next) {
   log.info(
@@ -44,7 +60,17 @@ function logIt(req, res, next) {
   next();
 }
 
+// Secure Route middleware
+function secureRoute(req, res, next) {
+  if (!req.headers.token) {
+    res.redirect("/");
+  }
+  next();
+}
+
+// Add middlewares to router
 router.use(logIt);
+router.use(unless("/", secureRoute));
 
 // Static files routes
 router.get("/", (req, res) => {
