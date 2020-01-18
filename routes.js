@@ -37,14 +37,34 @@ const mongo = new Mongo();
 mongo.connect();
 
 /**
+ * Check if an element exists in an array
+ *
+ * @param {array} haystack
+ * @param {*} needle
+ */
+function inArray(haystack, needle) {
+  let res = false;
+
+  [...haystack].forEach(element => {
+    if (element === needle) {
+      res = true;
+    }
+  });
+
+  return res;
+}
+
+/**
  * Exempt path/url from a specific middleware
  *
  * @param {string} path
  * @param {string} middleware
  */
-function unless(path, middleware) {
+let routesArr = ["/", "/api/users/login"];
+
+function unless(routesArr, middleware) {
   return function(req, res, next) {
-    if (path === req.path) {
+    if (inArray(routesArr, req.path)) {
       return next();
     } else {
       return middleware(req, res, next);
