@@ -19,6 +19,7 @@ const express = require("express");
 // Require in-app modules
 const Logger = require("./lib/logger");
 const Mongo = require("./lib/mongo");
+const jwt = require("./lib/jwt");
 
 // Controllers
 const User = require("./controllers/user");
@@ -54,22 +55,30 @@ function inArray(haystack, needle) {
   return res;
 }
 
-/**
- * Exempt path/url from a specific middleware
- *
- * @param {string} path
- * @param {string} middleware
- */
+// Routes excempted from authentication
 let routesArr = ["/", "/api/users/login", "/join", "/api/users/create"];
 
-function unless(routesArr, middleware) {
-  return function(req, res, next) {
-    if (inArray(routesArr, req.path)) {
-      return next();
-    } else {
-      return middleware(req, res, next);
+/**
+ * Get cookie from request object
+ *
+ * @param {object} req
+ * @param {string} name
+ */
+function getCookie(req, name) {
+  let cook = false;
+  if (req.headers.cookie) {
+    let cookies = req.headers.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i].trim();
+
+      if (cookie.indexOf(name) == 0) {
+        cook = cookie.substring(name.length + 1, cookie.length).toString();
+      }
     }
-  };
+  }
+
+  return cook;
 }
 
 // Logger middleware
@@ -80,24 +89,53 @@ function logIt(req, res, next) {
   next();
 }
 
-// Secure Route middleware
-function secureRoute(req, res, next) {
-  !req.cookies.token ? res.redirect("/") : "";
-  next();
+// Secure routes middleware
+function secure(req, res, next) {
+  let token = getCookie(req, "token");
+
+  if (token) {
+    jwt.verify(token, err => {
+      if (err) {
+        routesArr.push("/api/users/logout");
+      }
+    });
+  }
+
+  if (inArray(routesArr, req.path)) {
+    if (token) {
+      jwt.verify(token, err => {
+        if (!err) {
+          res.redirect("/group");
+        }
+      });
+    }
+    next();
+  } else {
+    if (token) {
+      jwt.verify(token, err => {
+        if (err) {
+          log.error(`Authentication error: <<<< ${err} >>>>`);
+
+          res.redirect("/");
+        }
+        next();
+      });
+    } else {
+      res.redirect("/");
+    }
+  }
 }
 
 // Add middlewares to router
 router.use(logIt);
-router.use(unless(routesArr, secureRoute));
+router.use(secure);
 
 // Static files routes
 router.get("/", (req, res) => {
-  req.cookies.token ? res.redirect("/group") : "";
   res.sendFile(__dirname + "/pages/index.html");
 });
 
 router.get("/join", (req, res) => {
-  req.cookies.token ? res.redirect("/group") : "";
   res.sendFile(__dirname + "/pages/join.html");
 });
 
@@ -114,8 +152,8 @@ router.post("/api/users/create", (req, res) => {
 
 router.post("/api/users/login", (req, res) => {
   user_con.login(req.body, resp => {
-    let token = user_con.user_data.token;
-    let user = user_con.user_data.data.username;
+    let token = user_con.user_data ? user_con.user_data.token : false;
+    let user = user_con.user_data ? user_con.user_data.data.username : false;
     res.json({ status: resp.status, message: resp.message, token, user });
   });
 });
