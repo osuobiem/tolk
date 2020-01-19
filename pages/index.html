@@ -72,10 +72,8 @@
           contentType: "application/json",
           success: res => {
             if (res.status) {
-              localStorage.setItem("token", res.token);
               localStorage.setItem("user", res.user);
 
-              document.cookie = `token = ${res.token}`;
               location.assign("http://localhost:8008/group");
             } else {
               alert(res.message);

@@ -25,6 +25,16 @@
         display: block;
         border-radius: 5px;
       }
+
+      #message-area {
+        border: solid 1px;
+        border-radius: 4px;
+        padding: 10px;
+        background: #f1f1f1;
+        margin: 20px 0;
+        display: none;
+        width: 30%;
+      }
     </style>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -41,7 +51,9 @@
       </button>
     </h4>
     <p id="username"></p>
-    <div id="message-area"></div>
+    <div id="message-area">
+      <h4>MESSAGE AREA</h4>
+    </div>
     <form id="chat-form">
       <textarea
         name="message"
@@ -67,7 +79,7 @@
           e.preventDefault();
 
           if ($("#message").val().length) {
-            socket.emit("message", $("#message").val());
+            socket.emit("group-message", $("#message").val());
             $("#message").val("");
             return false;
           } else {
@@ -81,9 +93,7 @@
             url: "http://localhost:8008/api/users/logout",
             success: res => {
               if (res.status) {
-                document.cookie =
-                  "token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
-                localStorage.removeItem("token");
+                localStorage.removeItem("user");
                 location.assign("http://localhost:8008");
               } else {
                 alert("Oops! Something went wrong. Try Again!");
@@ -92,8 +102,11 @@
           });
         });
 
-        socket.on("message", msg => {
-          $("#message-area").append($("<p>").text(msg));
+        socket.on("group-message", res => {
+          $("#message-area").attr("style", "display: block");
+          $("#message-area").append(
+            $("<p>").text(res.sender + ": " + res.message)
+          );
         });
 
         socket.on("disconnect", () => {

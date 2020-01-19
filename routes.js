@@ -65,20 +65,7 @@ let routesArr = ["/", "/api/users/login", "/join", "/api/users/create"];
  * @param {string} name
  */
 function getCookie(req, name) {
-  let cook = false;
-  if (req.headers.cookie) {
-    let cookies = req.headers.cookie.split(";");
-
-    for (let i = 0; i < cookies.length; i++) {
-      let cookie = cookies[i].trim();
-
-      if (cookie.indexOf(name) == 0) {
-        cook = cookie.substring(name.length + 1, cookie.length).toString();
-      }
-    }
-  }
-
-  return cook;
+  return req.signedCookies ? req.signedCookies[name] : false;
 }
 
 // Logger middleware
@@ -94,72 +81,77 @@ function secure(req, res, next) {
   let token = getCookie(req, "token");
 
   if (token) {
-    jwt.verify(token, err => {
-      if (err) {
-        routesArr.push("/api/users/logout");
-      }
-    });
-  }
-
-  if (inArray(routesArr, req.path)) {
-    if (token) {
+    if (inArray(routesArr, req.path)) {
+      res.redirect("/group");
+    } else {
       jwt.verify(token, err => {
-        if (!err) {
-          res.redirect("/group");
+        if (err) {
+          jwt.issue({ _id: user_con.user_data.data._id }, "secret", {
+            expiresIn: 60 * 60 * 5
+          });
         }
       });
     }
-    next();
   } else {
-    if (token) {
-      jwt.verify(token, err => {
-        if (err) {
-          log.error(`Authentication error: <<<< ${err} >>>>`);
-
-          res.redirect("/");
-        }
-        next();
-      });
-    } else {
+    if (!inArray(routesArr, req.path)) {
+      user_con.user_data = {};
+      res.clearCookie("token");
       res.redirect("/");
     }
   }
+
+  next();
 }
 
 // Add middlewares to router
 router.use(logIt);
 router.use(secure);
 
-// Static files routes
+/* Static files routes */
+// Login page
 router.get("/", (req, res) => {
   res.sendFile(__dirname + "/pages/index.html");
 });
 
+// Join/Regitser page
 router.get("/join", (req, res) => {
   res.sendFile(__dirname + "/pages/join.html");
 });
 
+// Group chat page
 router.get("/group", (req, res) => {
   res.sendFile(__dirname + "/pages/group.html");
 });
 
-// API routes
+/* API routes */
+// Create new user
 router.post("/api/users/create", (req, res) => {
   user_con.create(req.body, resp => {
     res.json({ status: resp.status, message: resp.message });
   });
 });
 
+// User login
 router.post("/api/users/login", (req, res) => {
   user_con.login(req.body, resp => {
     let token = user_con.user_data ? user_con.user_data.token : false;
     let user = user_con.user_data ? user_con.user_data.data.username : false;
-    res.json({ status: resp.status, message: resp.message, token, user });
+
+    res.cookie("token", token, {
+      sameSite: true,
+      expires: new Date(Date.now() + 300000),
+      httpOnly: true,
+      signed: true
+    });
+
+    res.json({ status: resp.status, message: resp.message, user });
   });
 });
 
+// User logout
 router.post("/api/users/logout", (req, res) => {
   user_con.user_data = {};
+  res.clearCookie("token");
   res.json({ status: true });
 });
 

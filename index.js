@@ -19,6 +19,7 @@ require("dotenv").config();
 const app = require("express")();
 const http = require("http").createServer(app);
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 // Require in-app modules
 const Socket = require("./lib/socket");
@@ -26,6 +27,7 @@ const Logger = require("./lib/logger");
 const router = require("./routes");
 
 app.use(bodyParser.json());
+app.use(cookieParser("secret"));
 app.use(router);
 
 // Set app PORT
@@ -38,12 +40,13 @@ log.console = true;
 // Connect to socket
 let io = new Socket(http);
 io.connect(sock => {
-  sock.socket.on("message", msg => {
-    sock.socket.broadcast.emit("message", msg);
+  // Listen for group message
+  sock.socket.on("group-message", msg => {
+    sock.io.emit("group-message", msg);
 
     let ip = sock.socket.handshake.address;
 
-    log.info(`${ip} sent a broadcast message`);
+    log.info(`${ip} sent a group message`);
   });
 
   // Check for socket disconnection
