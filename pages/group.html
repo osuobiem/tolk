@@ -7,7 +7,7 @@
     <title>Socket.io Group Chat</title>
 
     <style>
-      #f-btn {
+      .f-btn {
         padding: 10px 15px;
         border-radius: 5px;
         color: #ffffff;
@@ -16,7 +16,7 @@
         margin-top: 10px;
       }
 
-      #f-btn:hover {
+      .f-btn:hover {
         background-color: #2136ac;
         cursor: pointer;
       }
@@ -35,7 +35,12 @@
     ></script>
   </head>
   <body>
-    <h4>Group Chat</h4>
+    <h4>
+      Group Chat<button class="f-btn" id="logout" style="margin-left: 110px;">
+        Logout
+      </button>
+    </h4>
+    <p id="username"></p>
     <div id="message-area"></div>
     <form id="chat-form">
       <textarea
@@ -45,12 +50,18 @@
         rows="10"
         id="message"
       ></textarea>
-      <button id="f-btn">Send</button>
+      <button class="f-btn">Send</button>
     </form>
 
     <script>
       $(function() {
         var socket = io("http://localhost:8008");
+
+        $("#username").html(
+          `Logged in as: <strong><em>${localStorage.getItem(
+            "user"
+          )}</em></strong>`
+        );
 
         $("#chat-form").submit(e => {
           e.preventDefault();
@@ -62,6 +73,23 @@
           } else {
             alert("Message field can not be empty!");
           }
+        });
+
+        $("#logout").click(() => {
+          $.ajax({
+            type: "POST",
+            url: "http://localhost:8008/api/users/logout",
+            success: res => {
+              if (res.status) {
+                document.cookie =
+                  "token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+                localStorage.removeItem("token");
+                location.assign("http://localhost:8008");
+              } else {
+                alert("Oops! Something went wrong. Try Again!");
+              }
+            }
+          });
         });
 
         socket.on("message", msg => {

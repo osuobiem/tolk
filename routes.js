@@ -115,8 +115,14 @@ router.post("/api/users/create", (req, res) => {
 router.post("/api/users/login", (req, res) => {
   user_con.login(req.body, resp => {
     let token = user_con.user_data.token;
-    res.json({ status: resp.status, message: resp.message, token });
+    let user = user_con.user_data.data.username;
+    res.json({ status: resp.status, message: resp.message, token, user });
   });
+});
+
+router.post("/api/users/logout", (req, res) => {
+  user_con.user_data = {};
+  res.json({ status: true });
 });
 
 module.exports = router;
