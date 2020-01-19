@@ -60,7 +60,7 @@ function inArray(haystack, needle) {
  * @param {string} path
  * @param {string} middleware
  */
-let routesArr = ["/", "/api/users/login"];
+let routesArr = ["/", "/api/users/login", "/join", "/api/users/create"];
 
 function unless(routesArr, middleware) {
   return function(req, res, next) {
@@ -82,22 +82,22 @@ function logIt(req, res, next) {
 
 // Secure Route middleware
 function secureRoute(req, res, next) {
-  if (!req.headers.token) {
-    res.redirect("/");
-  }
+  !req.cookies.token ? res.redirect("/") : "";
   next();
 }
 
 // Add middlewares to router
 router.use(logIt);
-router.use(unless("/", secureRoute));
+router.use(unless(routesArr, secureRoute));
 
 // Static files routes
 router.get("/", (req, res) => {
+  req.cookies.token ? res.redirect("/group") : "";
   res.sendFile(__dirname + "/pages/index.html");
 });
 
 router.get("/join", (req, res) => {
+  req.cookies.token ? res.redirect("/group") : "";
   res.sendFile(__dirname + "/pages/join.html");
 });
 
@@ -114,7 +114,8 @@ router.post("/api/users/create", (req, res) => {
 
 router.post("/api/users/login", (req, res) => {
   user_con.login(req.body, resp => {
-    res.json({ status: resp.status, message: resp.message });
+    let token = user_con.user_data.token;
+    res.json({ status: resp.status, message: resp.message, token });
   });
 });
 

@@ -19,6 +19,7 @@ require("dotenv").config();
 const app = require("express")();
 const http = require("http").createServer(app);
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 // Require in-app modules
 const Socket = require("./lib/socket");
@@ -26,6 +27,7 @@ const Logger = require("./lib/logger");
 const router = require("./routes");
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(router);
 
 // Set app PORT
