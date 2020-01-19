@@ -100,15 +100,16 @@ class User {
             callback(res);
           })
           .catch(err => {
+            log.error(`Authentication Error: <<<< ${err} >>>>`);
             callback(err);
           });
       })
       .catch(err => {
-        log.error(`An error occured <<<< ${err} >>>>`);
-        return {
+        log.error(`Authentication Error: <<<< ${err} >>>>`);
+        callback({
           status: false,
-          message: "Oops something went wrong. Try Again!"
-        };
+          message: "Invalid Credentials!"
+        });
       });
   }
 
