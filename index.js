@@ -41,8 +41,8 @@ log.console = true;
 let io = new Socket(http);
 io.connect(sock => {
   // Listen for group message
-  sock.socket.on("group-message", msg => {
-    sock.io.emit("group-message", msg);
+  sock.socket.on("group-message", res => {
+    sock.io.emit("group-message", res);
 
     let ip = sock.socket.handshake.address;
 

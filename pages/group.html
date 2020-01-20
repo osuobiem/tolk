@@ -13,7 +13,6 @@
         color: #ffffff;
         background-color: #2a46de;
         border: 0;
-        margin-top: 10px;
       }
 
       .f-btn:hover {
@@ -21,19 +20,46 @@
         cursor: pointer;
       }
 
-      #message {
-        display: block;
+      .field {
+        border: solid 0.5px;
+        height: 30px;
         border-radius: 5px;
+        padding: 2px 5px;
+        margin-bottom: 5px;
+        width: 26%;
       }
 
       #message-area {
-        border: solid 1px;
+        border: solid 1px #a0a0a0;
         border-radius: 4px;
         padding: 10px;
-        background: #f1f1f1;
         margin: 20px 0;
         display: none;
         width: 30%;
+      }
+
+      .o-messages {
+        background: #2e4ede;
+        width: fit-content;
+        padding: 10px;
+        border-radius: 0 10px 10px 10px;
+        color: #ffffff;
+        margin: 2px;
+      }
+
+      .y-messages {
+        background: #a0a0a0;
+        width: fit-content;
+        padding: 10px;
+        border-radius: 10px 10px 0px 10px;
+        color: #ffffff;
+        margin: 2px;
+      }
+
+      .i-little {
+        font-size: 12px;
+        color: #3e3e3e;
+        font-weight: 600;
       }
     </style>
 
@@ -55,13 +81,13 @@
       <h4>MESSAGE AREA</h4>
     </div>
     <form id="chat-form">
-      <textarea
+      <input
+        type="text"
         name="message"
         placeholder="Type message here"
-        cols="30"
-        rows="10"
         id="message"
-      ></textarea>
+        class="field"
+      />
       <button class="f-btn">Send</button>
     </form>
 
@@ -78,8 +104,11 @@
         $("#chat-form").submit(e => {
           e.preventDefault();
 
+          let message = $("#message").val();
+          let sender = localStorage.getItem("user");
+
           if ($("#message").val().length) {
-            socket.emit("group-message", $("#message").val());
+            socket.emit("group-message", { message, sender });
             $("#message").val("");
             return false;
           } else {
@@ -103,10 +132,23 @@
         });
 
         socket.on("group-message", res => {
-          $("#message-area").attr("style", "display: block");
-          $("#message-area").append(
-            $("<p>").text(res.sender + ": " + res.message)
-          );
+          $("#message-area").attr("style", "display: grid");
+
+          if (res.sender === localStorage.getItem("user")) {
+            $("#message-area").append(
+              $(
+                `<div style="display: grid; justify-content: end; margin: 5px 0">`
+              ).html(`<p class="y-messages">${res.message}</p>`)
+            );
+          } else {
+            $("#message-area").append(
+              $(
+                `<div style="width: fit-content; text-align: right; margin: 5px 0m">`
+              ).html(
+                `<p class="o-messages">${res.message}</p><em class="i-little">${res.sender}</em>`
+              )
+            );
+          }
         });
 
         socket.on("disconnect", () => {

@@ -25,6 +25,9 @@ const jwt = require("../lib/jwt");
 const log = new Logger();
 log.console = true;
 
+// JWT secret key
+const key = process.env.JWT_KEY;
+
 class User {
   // Member variables
   user_data;
@@ -60,7 +63,7 @@ class User {
             }
             log.info("User created successfully");
 
-            const token = jwt.issue({ _id: data._id }, "secret", {
+            const token = jwt.issue({ _id: data._id }, key, {
               expiresIn: 60 * 60 * 5
             });
 
@@ -90,9 +93,7 @@ class User {
       .then(data => {
         this.comparePassword(user.password, data.password)
           .then(res => {
-            const token = jwt.issue({ _id: data._id }, "secret", {
-              expiresIn: 60 * 60 * 5
-            });
+            const token = jwt.issue({ _id: data._id });
             this.user_data = { token, data };
 
             log.info("User logged in successfully");

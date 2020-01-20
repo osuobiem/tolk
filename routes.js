@@ -37,6 +37,9 @@ log.console = true;
 const mongo = new Mongo();
 mongo.connect();
 
+// JWT secret key
+const key = process.env.JWT_KEY;
+
 /**
  * Check if an element exists in an array
  *
@@ -86,8 +89,12 @@ function secure(req, res, next) {
     } else {
       jwt.verify(token, err => {
         if (err) {
-          jwt.issue({ _id: user_con.user_data.data._id }, "secret", {
-            expiresIn: 60 * 60 * 5
+          let new_token = jwt.issue({ _id: user_con.user_data.data._id }, key);
+
+          res.cookie("token", new_token, {
+            sameSite: true,
+            httpOnly: true,
+            signed: true
           });
         }
       });
@@ -95,8 +102,7 @@ function secure(req, res, next) {
   } else {
     if (!inArray(routesArr, req.path)) {
       user_con.user_data = {};
-      res.clearCookie("token");
-      res.redirect("/");
+      res.clearCookie("token").redirect("/");
     }
   }
 
@@ -137,14 +143,13 @@ router.post("/api/users/login", (req, res) => {
     let token = user_con.user_data ? user_con.user_data.token : false;
     let user = user_con.user_data ? user_con.user_data.data.username : false;
 
-    res.cookie("token", token, {
-      sameSite: true,
-      expires: new Date(Date.now() + 300000),
-      httpOnly: true,
-      signed: true
-    });
-
-    res.json({ status: resp.status, message: resp.message, user });
+    res
+      .cookie("token", token, {
+        sameSite: true,
+        httpOnly: true,
+        signed: true
+      })
+      .json({ status: resp.status, message: resp.message, user });
   });
 });
 
