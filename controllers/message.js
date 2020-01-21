@@ -17,7 +17,7 @@
 const bcrypt = require("bcrypt");
 
 // Require in-app modules
-const MessageModel = require("../models/message.model");
+const GroupMessageModel = require("../models/group-message.model");
 const Logger = require("../lib/logger");
 
 // Create app logger instance
@@ -25,15 +25,21 @@ const log = new Logger();
 log.console = true;
 
 class Message {
-  save(message, callback) {
+  /**
+   * Save group message in db
+   *
+   * @param {object} message
+   * @param {function} callback
+   */
+  saveToGroup(message, callback) {
     let new_message = {
       content: message.content,
       sender: message.sender,
       stamp: Date.now()
     };
 
-    let message_model = new MessageModel(new_message);
-    message_model
+    let group_message_model = new GroupMessageModel(new_message);
+    group_message_model
       .save()
       .then(data => {
         if (!data || data.length === 0) {

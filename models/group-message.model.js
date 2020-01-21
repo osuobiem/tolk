@@ -1,7 +1,7 @@
 /**
  * ./models/user.model.js
- * Message Model
- * Message model instance
+ * Group Message Model
+ * Group Message model instance
  *
  * @package Tolk
  * @version 1.0.0
@@ -30,4 +30,4 @@ let Message = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model("Message", Message);
+module.exports = mongoose.model("Group Message", Message);
