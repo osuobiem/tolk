@@ -21,8 +21,14 @@ let Message = new mongoose.Schema({
     required: true
   },
   sender: {
-    type: String,
-    required: true
+    _id: {
+      type: String,
+      required: true
+    },
+    username: {
+      type: String,
+      required: true
+    }
   },
   stamp: {
     type: String,

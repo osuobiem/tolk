@@ -38,7 +38,7 @@ const messanger = {
 
         log.info(`${ip} sent a group message`);
       } else {
-        log.error(`${ip} message not sent`);
+        log.error(`${ip} group message not sent`);
       }
     });
   }

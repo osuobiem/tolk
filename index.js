@@ -25,6 +25,7 @@ const cookieParser = require("cookie-parser");
 const Socket = require("./lib/socket");
 const Logger = require("./lib/logger");
 const router = require("./routes");
+const messanger = require("./helpers/messanger");
 
 app.use(bodyParser.json());
 app.use(cookieParser("secret"));
@@ -42,7 +43,7 @@ let io = new Socket(http);
 io.connect(sock => {
   // Listen for group message
   sock.socket.on("group-message", res => {
-    router.sendMessage(sock, res);
+    messanger.sendGroupMessage(sock, res);
   });
 
   // Check for socket disconnection
