@@ -25,9 +25,9 @@ let Message = new mongoose.Schema({
     required: true
   },
   stamp: {
-    type: Number,
+    type: String,
     required: true
   }
 });
 
-module.exports = mongoose.model("User", User);
+module.exports = mongoose.model("Message", Message);

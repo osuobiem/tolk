@@ -87,17 +87,22 @@ function secure(req, res, next) {
     if (inArray(routesArr, req.path)) {
       res.redirect("/group");
     } else {
-      jwt.verify(token, err => {
-        if (err) {
-          let new_token = jwt.issue({ _id: user_con.user_data.data._id }, key);
-
-          res.cookie("token", new_token, {
-            sameSite: true,
-            httpOnly: true,
-            signed: true
-          });
-        }
-      });
+      if(user_con.user_data) {
+        jwt.verify(token, err => {
+          if (err) {
+            let new_token = jwt.issue({ _id: user_con.user_data.data._id }, key);
+  
+            res.cookie("token", new_token, {
+              sameSite: true,
+              httpOnly: true,
+              signed: true
+            });
+          }
+        });
+      }
+      else {
+        res.clearCookie("token").redirect("/");
+      }
     }
   } else {
     if (!inArray(routesArr, req.path)) {
@@ -159,5 +164,6 @@ router.post("/api/users/logout", (req, res) => {
   res.clearCookie("token");
   res.json({ status: true });
 });
+
 
 module.exports = router;

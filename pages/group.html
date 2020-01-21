@@ -105,10 +105,9 @@
           e.preventDefault();
 
           let message = $("#message").val();
-          let sender = localStorage.getItem("user");
 
           if ($("#message").val().length) {
-            socket.emit("group-message", { message, sender });
+            socket.emit("group-message", message);
             $("#message").val("");
             return false;
           } else {

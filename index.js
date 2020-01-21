@@ -42,11 +42,7 @@ let io = new Socket(http);
 io.connect(sock => {
   // Listen for group message
   sock.socket.on("group-message", res => {
-    sock.io.emit("group-message", res);
-
-    let ip = sock.socket.handshake.address;
-
-    log.info(`${ip} sent a group message`);
+    router.sendMessage(sock, res);
   });
 
   // Check for socket disconnection
