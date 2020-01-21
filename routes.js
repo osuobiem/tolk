@@ -87,11 +87,14 @@ function secure(req, res, next) {
     if (inArray(routesArr, req.path)) {
       res.redirect("/group");
     } else {
-      if(user_con.user_data) {
+      if (user_con.user_data) {
         jwt.verify(token, err => {
           if (err) {
-            let new_token = jwt.issue({ _id: user_con.user_data.data._id }, key);
-  
+            let new_token = jwt.issue(
+              { _id: user_con.user_data.data._id },
+              key
+            );
+
             res.cookie("token", new_token, {
               sameSite: true,
               httpOnly: true,
@@ -99,8 +102,7 @@ function secure(req, res, next) {
             });
           }
         });
-      }
-      else {
+      } else {
         res.clearCookie("token").redirect("/");
       }
     }
@@ -138,7 +140,16 @@ router.get("/group", (req, res) => {
 // Create new user
 router.post("/api/users/create", (req, res) => {
   user_con.create(req.body, resp => {
-    res.json({ status: resp.status, message: resp.message });
+    let token = user_con.user_data ? user_con.user_data.token : false;
+    let user = user_con.user_data ? user_con.user_data.data : false;
+
+    res
+      .cookie("token", token, {
+        sameSite: true,
+        httpOnly: true,
+        signed: true
+      })
+      .json({ status: resp.status, message: resp.message, user });
   });
 });
 
@@ -146,7 +157,7 @@ router.post("/api/users/create", (req, res) => {
 router.post("/api/users/login", (req, res) => {
   user_con.login(req.body, resp => {
     let token = user_con.user_data ? user_con.user_data.token : false;
-    let user = user_con.user_data ? user_con.user_data.data.username : false;
+    let user = user_con.user_data ? user_con.user_data.data : false;
 
     res
       .cookie("token", token, {
@@ -164,6 +175,5 @@ router.post("/api/users/logout", (req, res) => {
   res.clearCookie("token");
   res.json({ status: true });
 });
-
 
 module.exports = router;

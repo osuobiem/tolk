@@ -72,7 +72,9 @@
           contentType: "application/json",
           success: res => {
             if (res.status) {
-              location.replace("http://localhost:8008/group");
+              localStorage.setItem("user", res.user);
+
+              location.assign("http://localhost:8008/group");
             } else {
               alert(res.message);
             }
