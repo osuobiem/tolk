@@ -34,7 +34,10 @@ class Message {
   saveToGroup(message, callback) {
     let new_message = {
       content: message.content,
-      sender: message.sender,
+      sender: {
+        _id: message.user._id,
+        username: message.user.username
+      },
       stamp: Date.now()
     };
 

@@ -19,19 +19,14 @@ const messanger = {
    * @param {object} socket
    * @param {object} content
    */
-  sendGroupMessage(socket, content) {
+  sendGroupMessage(socket, message) {
     let ip = socket.socket.handshake.address;
-
-    let message = {
-      content,
-      sender: user_con.user_data.data._id
-    };
 
     message_con.save(message, res => {
       if (res.status) {
         let resp = {
           message: message.content,
-          sender: user_con.user_data.data.username,
+          sender: message.user.username,
           stamp: res.data.stamp
         };
         socket.io.emit("group-message", resp);

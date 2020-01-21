@@ -72,6 +72,7 @@
           contentType: "application/json",
           success: res => {
             if (res.status) {
+              res.user = JSON.stringify(res.user);
               localStorage.setItem("user", res.user);
 
               location.assign("http://localhost:8008/group");

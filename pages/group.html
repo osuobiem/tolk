@@ -96,15 +96,21 @@
         var socket = io("http://localhost:8008");
 
         $("#username").html(
-          `Logged in as: <strong><em>${localStorage.getItem(
-            "user"
-          )}</em></strong>`
+          `Logged in as: <strong><em>${
+            JSON.parse(localStorage.getItem("user")).username
+          }</em></strong>`
         );
 
         $("#chat-form").submit(e => {
           e.preventDefault();
 
-          let message = $("#message").val();
+          let content = $("#message").val();
+          let user = JSON.parse(localStorage.getItem("user"));
+
+          let message = {
+            content,
+            user
+          };
 
           if ($("#message").val().length) {
             socket.emit("group-message", message);
@@ -133,7 +139,7 @@
         socket.on("group-message", res => {
           $("#message-area").attr("style", "display: grid");
 
-          if (res.sender === localStorage.getItem("user")) {
+          if (res.sender === localStorage.getItem("username")) {
             $("#message-area").append(
               $(
                 `<div style="display: grid; justify-content: end; margin: 5px 0">`
