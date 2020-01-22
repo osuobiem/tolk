@@ -172,8 +172,7 @@ router.post("/api/users/login", (req, res) => {
 // User logout
 router.post("/api/users/logout", (req, res) => {
   user_con.user_data = {};
-  res.clearCookie("token");
-  res.json({ status: true });
+  res.clearCookie("token").json({ status: true });
 });
 
 module.exports = router;

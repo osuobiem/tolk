@@ -11,6 +11,17 @@
  */
 
 "use strict";
+// Require in-app modules
+const Logger = require("../lib/logger");
+
+// Controllers
+const Message = require("../controllers/message");
+
+const message_con = new Message();
+
+// Create logger instance
+const log = new Logger();
+log.console = true;
 
 const messanger = {
   /**
@@ -22,7 +33,7 @@ const messanger = {
   sendGroupMessage(socket, message) {
     let ip = socket.socket.handshake.address;
 
-    message_con.save(message, res => {
+    message_con.saveToGroup(message, res => {
       if (res.status) {
         let resp = {
           message: message.content,

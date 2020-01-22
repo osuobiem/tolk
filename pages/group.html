@@ -56,6 +56,38 @@
         margin: 2px;
       }
 
+      .m-area {
+        width: fit-content;
+        text-align: right;
+        margin: 5px 0m;
+      }
+
+      @-moz-document url-prefix() {
+        .o-messages {
+          background: #2e4ede;
+          width: -moz-fit-content;
+          padding: 10px;
+          border-radius: 0 10px 10px 10px;
+          color: #ffffff;
+          margin: 2px;
+        }
+
+        .y-messages {
+          background: #a0a0a0;
+          width: -moz-fit-content;
+          padding: 10px;
+          border-radius: 10px 10px 0px 10px;
+          color: #ffffff;
+          margin: 2px;
+        }
+
+        .m-area {
+          width: -moz-fit-content;
+          text-align: right;
+          margin: 5px 0m;
+        }
+      }
+
       .i-little {
         font-size: 12px;
         color: #3e3e3e;
@@ -139,7 +171,9 @@
         socket.on("group-message", res => {
           $("#message-area").attr("style", "display: grid");
 
-          if (res.sender === localStorage.getItem("username")) {
+          if (
+            res.sender === JSON.parse(localStorage.getItem("user")).username
+          ) {
             $("#message-area").append(
               $(
                 `<div style="display: grid; justify-content: end; margin: 5px 0">`
@@ -147,9 +181,7 @@
             );
           } else {
             $("#message-area").append(
-              $(
-                `<div style="width: fit-content; text-align: right; margin: 5px 0m">`
-              ).html(
+              $(`<div class="m-area">`).html(
                 `<p class="o-messages">${res.message}</p><em class="i-little">${res.sender}</em>`
               )
             );
