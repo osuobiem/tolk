@@ -94,7 +94,7 @@ class User {
         username: user.username
       })
         .then(data => {
-          if (!data) {
+          if (!data || data.length === 0) {
             reject({
               status: false,
               message: "Invalid Credentials!"
