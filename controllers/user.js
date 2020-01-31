@@ -64,9 +64,7 @@ class User {
               }
               log.info("User created successfully");
 
-              const token = jwt.issue({ _id: data._id }, key, {
-                expiresIn: 60 * 60 * 5
-              });
+              const token = jwt.issue({ _id: data._id }, key);
 
               this.user_data = { token, data };
 
@@ -102,7 +100,7 @@ class User {
           } else {
             this.comparePassword(user.password, data.password)
               .then(res => {
-                const token = jwt.issue({ _id: data._id });
+                const token = jwt.issue({ _id: data._id }, key);
 
                 this.user_data = {
                   token,
