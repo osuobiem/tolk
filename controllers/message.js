@@ -70,6 +70,22 @@ class Message {
         });
       });
   }
+
+  /**
+   * Get group messages
+   */
+  groupMessages() {
+    return new Promise((resolve, reject) => {
+      GroupMessageModel.find((err, data) => {
+        if (err) {
+          log.error(`Error fetching group messages: <<<< ${err} >>>>`);
+          reject(false);
+        }
+
+        resolve(data);
+      });
+    });
+  }
 }
 
 module.exports = Message;

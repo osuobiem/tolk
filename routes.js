@@ -23,8 +23,10 @@ const jwt = require("./lib/jwt");
 
 // Controllers
 const User = require("./controllers/user");
+const Message = require("./controllers/message");
 
 const user_con = new User();
+const message_con = new Message();
 
 // Initialize router object
 const router = express.Router();
@@ -173,6 +175,18 @@ router.post("/api/users/login", (req, res) => {
 router.post("/api/users/logout", (req, res) => {
   user_con.user_data = {};
   res.clearCookie("token").json({ status: true });
+});
+
+// Get group messages
+router.get("/api/group/messages", (req, res) => {
+  let data = message_con
+    .groupMessages()
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.send(err);
+    });
 });
 
 module.exports = router;

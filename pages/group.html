@@ -35,7 +35,9 @@
         padding: 10px;
         margin: 20px 0;
         display: none;
-        width: 30%;
+        width: 40%;
+        height: 425px;
+        overflow: auto;
       }
 
       .o-messages {
@@ -59,7 +61,7 @@
       .m-area {
         width: fit-content;
         text-align: right;
-        margin: 5px 0m;
+        margin: 5px 0;
       }
 
       @-moz-document url-prefix() {
@@ -84,7 +86,7 @@
         .m-area {
           width: -moz-fit-content;
           text-align: right;
-          margin: 5px 0m;
+          margin: 5px 0;
         }
       }
 
@@ -124,6 +126,44 @@
     </form>
 
     <script>
+      $(document).ready(function() {
+        $.ajax({
+          type: "GET",
+          url: "http://localhost:8008/api/group/messages",
+          success: res => {
+            if (res !== false) {
+              [...res].forEach(e => {
+                displayMessage({
+                  sender: e.sender.username,
+                  message: e.content
+                });
+              });
+            }
+          }
+        });
+      });
+
+      function displayMessage(res) {
+        $("#message-area").attr("style", "display: grid");
+
+        if (res.sender === JSON.parse(localStorage.getItem("user")).username) {
+          $("#message-area").append(
+            $(
+              `<div style="display: grid; justify-content: end; margin: 5px 0">`
+            ).html(`<p class="y-messages">${res.message}</p>`)
+          );
+        } else {
+          $("#message-area").append(
+            $(`<div class="m-area">`).html(
+              `<p class="o-messages">${res.message}</p><em class="i-little">${res.sender}</em>`
+            )
+          );
+        }
+
+        let m_area = document.getElementById("message-area");
+        m_area.scrollTop = m_area.scrollHeight;
+      }
+
       $(function() {
         var socket = io("http://localhost:8008");
 
@@ -169,23 +209,7 @@
         });
 
         socket.on("group-message", res => {
-          $("#message-area").attr("style", "display: grid");
-
-          if (
-            res.sender === JSON.parse(localStorage.getItem("user")).username
-          ) {
-            $("#message-area").append(
-              $(
-                `<div style="display: grid; justify-content: end; margin: 5px 0">`
-              ).html(`<p class="y-messages">${res.message}</p>`)
-            );
-          } else {
-            $("#message-area").append(
-              $(`<div class="m-area">`).html(
-                `<p class="o-messages">${res.message}</p><em class="i-little">${res.sender}</em>`
-              )
-            );
-          }
+          displayMessage(res);
         });
 
         socket.on("disconnect", () => {
