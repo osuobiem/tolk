@@ -86,32 +86,41 @@ class User {
    * @param {object} user
    * @param {function} callback
    */
-  login(user, callback) {
-    UserModel.findOne({
-      username: user.username
-    })
-      .then(data => {
-        this.comparePassword(user.password, data.password)
-          .then(res => {
-            const token = jwt.issue({ _id: data._id });
-            this.user_data = { token, data };
-
-            log.info("User logged in successfully");
-
-            callback(res);
-          })
-          .catch(err => {
-            log.error(`Authentication Error: <<<< ${err} >>>>`);
-            callback(err);
-          });
+  login(user) {
+    return new Promise((resolve, reject) => {
+      UserModel.findOne({
+        username: user.username
       })
-      .catch(err => {
-        log.error(`Authentication Error: <<<< ${err} >>>>`);
-        callback({
-          status: false,
-          message: "Invalid Credentials!"
+        .then(data => {
+          if (!data) {
+            reject({
+              status: false,
+              message: "Invalid Credentials!"
+            });
+          } else {
+            this.comparePassword(user.password, data.password)
+              .then(res => {
+                const token = jwt.issue({ _id: data._id });
+                this.user_data = { token, data };
+
+                log.info("User logged in successfully");
+
+                resolve(res);
+              })
+              .catch(err => {
+                log.error(`Authentication Error: <<<< ${err} >>>>`);
+                reject(err);
+              });
+          }
+        })
+        .catch(err => {
+          log.error(`Authentication Error: <<<< ${err} >>>>`);
+          reject({
+            status: false,
+            message: "Invalid Credentials!"
+          });
         });
-      });
+    });
   }
 
   /**

@@ -157,18 +157,24 @@ router.post("/api/users/create", (req, res) => {
 
 // User login
 router.post("/api/users/login", (req, res) => {
-  user_con.login(req.body, resp => {
-    let token = user_con.user_data ? user_con.user_data.token : false;
-    let user = user_con.user_data ? user_con.user_data.data : false;
+  user_con
+    .login(req.body)
+    .then(resp => {
+      console.log(resp);
+      let token = user_con.user_data ? user_con.user_data.token : false;
+      let user = user_con.user_data ? user_con.user_data.data : false;
 
-    res
-      .cookie("token", token, {
-        sameSite: true,
-        httpOnly: true,
-        signed: true
-      })
-      .json({ status: resp.status, message: resp.message, user });
-  });
+      res
+        .cookie("token", token, {
+          sameSite: true,
+          httpOnly: true,
+          signed: true
+        })
+        .json({ status: resp.status, message: resp.message, user });
+    })
+    .catch(err => {
+      res.json({ status: err.status, message: err.message });
+    });
 });
 
 // User logout
