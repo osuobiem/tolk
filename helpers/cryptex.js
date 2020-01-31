@@ -24,7 +24,7 @@ module.exports = {
   /**
    * Encrypt data
    *
-   * @param {*, ! objects|arrays} text
+   * @param {*|Buffer object, ! object|array} text
    */
   encrypt(text) {
     let cipher = crypto.createCipheriv(algorithm, Buffer.from(ckey), iv);
@@ -36,7 +36,7 @@ module.exports = {
   /**
    * Decrypt data
    *
-   * @param {*, ! objects|arrays} text
+   * @param {*|Buffer object, ! object|array} text
    */
   decrypt(text) {
     let iv = Buffer.from(text.iv, "hex");
