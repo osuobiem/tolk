@@ -37,46 +37,48 @@ class User {
    *
    * @param {object} user
    */
-  create(user, callback) {
-    bcrypt.hash(user.password, 10, (err, hash) => {
-      if (err) {
-        log.error(`BCryt Error: <<<< ${err} >>>>`);
+  create(user) {
+    return new Promise((resolve, reject) => {
+      bcrypt.hash(user.password, 10, (err, hash) => {
+        if (err) {
+          log.error(`BCryt Error: <<<< ${err} >>>>`);
 
-        callback({
-          status: false,
-          message: "Oops somethig went wrong. Try Again!"
-        });
-      } else {
-        user.password = hash;
-
-        let user_model = new UserModel(user);
-        user_model
-          .save()
-          .then(data => {
-            if (!data || data.length === 0) {
-              log.error("Could not create user");
-
-              callback({
-                status: false,
-                message: "Oops somethig went wrong. Try Again!"
-              });
-            }
-            log.info("User created successfully");
-
-            const token = jwt.issue({ _id: data._id }, key, {
-              expiresIn: 60 * 60 * 5
-            });
-
-            this.user_data = { token, data };
-
-            callback({ status: true, message: "User created successfully" });
-          })
-          .catch(err => {
-            log.error(`An error occured <<<< ${err} >>>>`);
-
-            callback({ status: false, message: err.message });
+          reject({
+            status: false,
+            message: "Oops somethig went wrong. Try Again!"
           });
-      }
+        } else {
+          user.password = hash;
+
+          let user_model = new UserModel(user);
+          user_model
+            .save()
+            .then(data => {
+              if (!data || data.length === 0) {
+                log.error("Could not create user");
+
+                reject({
+                  status: false,
+                  message: "Oops somethig went wrong. Try Again!"
+                });
+              }
+              log.info("User created successfully");
+
+              const token = jwt.issue({ _id: data._id }, key, {
+                expiresIn: 60 * 60 * 5
+              });
+
+              this.user_data = { token, data };
+
+              resolve({ status: true, message: "User created successfully" });
+            })
+            .catch(err => {
+              log.error(`An error occured <<<< ${err} >>>>`);
+
+              reject({ status: false, message: err.message });
+            });
+        }
+      });
     });
   }
 

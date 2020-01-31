@@ -142,18 +142,23 @@ router.get("/group", (req, res) => {
 /* API routes */
 // Create new user
 router.post("/api/users/create", (req, res) => {
-  user_con.create(req.body, resp => {
-    let token = user_con.user_data ? user_con.user_data.token : false;
-    let user = user_con.user_data ? user_con.user_data.data : false;
+  user_con
+    .create(req.body)
+    .then(resp => {
+      let token = user_con.user_data ? user_con.user_data.token : false;
+      let user = user_con.user_data ? user_con.user_data.data : false;
 
-    res
-      .cookie("token", token, {
-        sameSite: true,
-        httpOnly: true,
-        signed: true
-      })
-      .json({ status: resp.status, message: resp.message, user });
-  });
+      res
+        .cookie("token", token, {
+          sameSite: true,
+          httpOnly: true,
+          signed: true
+        })
+        .json({ status: resp.status, message: resp.message, user });
+    })
+    .catch(err => {
+      res.json({ status: err.status, message: err.message });
+    });
 });
 
 // User login

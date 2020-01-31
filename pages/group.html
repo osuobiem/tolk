@@ -36,7 +36,7 @@
         margin: 20px 0;
         display: none;
         width: 40%;
-        height: 425px;
+        max-height: 425px;
         overflow: auto;
       }
 
@@ -149,7 +149,7 @@
         if (res.sender === JSON.parse(localStorage.getItem("user")).username) {
           $("#message-area").append(
             $(
-              `<div style="display: grid; justify-content: end; margin: 5px 0">`
+              `<div style="display: grid; justify-content: end; margin: 5px 0;">`
             ).html(`<p class="y-messages">${res.message}</p>`)
           );
         } else {
