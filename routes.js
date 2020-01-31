@@ -148,6 +148,8 @@ router.post("/api/users/create", (req, res) => {
       let token = user_con.user_data ? user_con.user_data.token : false;
       let user = user_con.user_data ? user_con.user_data.data : false;
 
+      user._id = crypt.encrypt(`${user._id}`);
+
       res
         .cookie("token", token, {
           sameSite: true,

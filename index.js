@@ -12,7 +12,7 @@
 
 "use strict";
 
-// Require and configure *dotenv* or environment variables
+// Require and configure *dotenv* for environment variables
 require("dotenv").config();
 
 // Require useful modules
@@ -28,7 +28,7 @@ const router = require("./routes");
 const messanger = require("./helpers/messanger");
 
 app.use(bodyParser.json());
-app.use(cookieParser("secret"));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(router);
 
 // Set app PORT
