@@ -20,6 +20,7 @@ const express = require("express");
 const Logger = require("./lib/logger");
 const Mongo = require("./lib/mongo");
 const jwt = require("./lib/jwt");
+const crypt = require("./helpers/cryptex");
 
 // Controllers
 const User = require("./controllers/user");
@@ -160,9 +161,10 @@ router.post("/api/users/login", (req, res) => {
   user_con
     .login(req.body)
     .then(resp => {
-      console.log(resp);
       let token = user_con.user_data ? user_con.user_data.token : false;
       let user = user_con.user_data ? user_con.user_data.data : false;
+
+      user._id = crypt.encrypt(`${user._id}`);
 
       res
         .cookie("token", token, {

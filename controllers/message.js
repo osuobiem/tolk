@@ -19,6 +19,7 @@ const bcrypt = require("bcrypt");
 // Require in-app modules
 const GroupMessageModel = require("../models/group-message.model");
 const Logger = require("../lib/logger");
+const crypt = require("../helpers/cryptex");
 
 // Create app logger instance
 const log = new Logger();
@@ -35,7 +36,7 @@ class Message {
     let new_message = {
       content: message.content,
       sender: {
-        _id: message.user._id,
+        _id: crypt.decrypt(message.user._id),
         username: message.user.username
       },
       stamp: Date.now()

@@ -101,7 +101,11 @@ class User {
             this.comparePassword(user.password, data.password)
               .then(res => {
                 const token = jwt.issue({ _id: data._id });
-                this.user_data = { token, data };
+
+                this.user_data = {
+                  token,
+                  data: { _id: data._id, username: data.username }
+                };
 
                 log.info("User logged in successfully");
 
