@@ -129,7 +129,7 @@
       $(document).ready(function() {
         $.ajax({
           type: "GET",
-          url: "http://localhost:8008/api/group/messages",
+          url: "http://" + window.location.host + "/api/group/messages",
           success: res => {
             if (res !== false) {
               [...res].forEach(e => {
@@ -165,7 +165,7 @@
       }
 
       $(function() {
-        var socket = io("http://localhost:8008");
+        var socket = io("http://" + window.location.host);
 
         $("#username").html(
           `Logged in as: <strong><em>${
@@ -196,11 +196,11 @@
         $("#logout").click(() => {
           $.ajax({
             type: "POST",
-            url: "http://localhost:8008/api/users/logout",
+            url: "http://" + window.location.host + "/api/users/logout",
             success: res => {
               if (res.status) {
                 localStorage.removeItem("user");
-                location.assign("http://localhost:8008");
+                location.assign("http://" + window.location.host);
               } else {
                 alert("Oops! Something went wrong. Try Again!");
               }

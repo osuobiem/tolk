@@ -39,13 +39,15 @@
   </head>
   <body>
     <h4>Join Chat</h4>
-    <form id="join-form">
+    <form id="join-form" method="POST">
       <input
         type="text"
         placeholder="Username"
         name="username"
         id="username"
         class="field"
+        ,
+        required
       />
       <input
         type="password"
@@ -53,13 +55,15 @@
         name="password"
         id="password"
         class="field"
+        ,
+        required
       />
       <button id="f-btn">Join</button>
       <p>Already joined? <a href="/">Login</a></p>
     </form>
 
     <script>
-      $("#join-form").submit(e => {
+      document.querySelector("#join-form").addEventListener("submit", e => {
         e.preventDefault();
 
         let username = $("#username").val();
@@ -67,7 +71,7 @@
 
         $.ajax({
           type: "POST",
-          url: "http://localhost:8008/api/users/create",
+          url: "http://" + window.location.host + "/api/users/create",
           data: `{ "username": "${username}", "password": "${password}" }`,
           contentType: "application/json",
           success: res => {
@@ -75,7 +79,7 @@
               res.user = JSON.stringify(res.user);
               localStorage.setItem("user", res.user);
 
-              location.assign("http://localhost:8008/group");
+              location.assign("http://" + window.location.host + "/group");
             } else {
               alert(res.message);
             }

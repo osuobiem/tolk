@@ -66,7 +66,10 @@ class User {
 
               const token = jwt.issue({ _id: data._id }, key);
 
-              this.user_data = { token, data };
+              this.user_data = {
+                token,
+                data: { _id: data._id, username: data.username }
+              };
 
               resolve({ status: true, message: "User created successfully" });
             })
@@ -93,6 +96,7 @@ class User {
       })
         .then(data => {
           if (!data || data.length === 0) {
+            log.error(`Authentication Error: <<<< Invalid Credentials! >>>>`);
             reject({
               status: false,
               message: "Invalid Credentials!"
